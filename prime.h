@@ -1,4 +1,5 @@
-#include <fstream>              //for file-handling
+#include <fstream> //for file-handling
+namespace ra{
 #define primeDBSize 10000
 
 template<typename randomEngine>
@@ -93,3 +94,4 @@ std::stringstream & operator >> (std::stringstream &in, random_prime_engine<engi
     in >> primeClass.eng; //retrun the state
     return in; 
 } 
+}
