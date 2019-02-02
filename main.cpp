@@ -6,11 +6,11 @@
 
 int main()
 {
-    random_prime_engine<std::default_random_engine> rpe1;
+    ra::random_prime_engine<std::default_random_engine> rpe1;
 
     std::chrono::steady_clock::time_point timeStamp = std::chrono::steady_clock::now();
     unsigned long rand_sedd = ((std::chrono::duration_cast<std::chrono::nanoseconds>(timeStamp.time_since_epoch()).count()));
-    random_prime_engine<std::default_random_engine> rpe2(rand_sedd);
+    ra::random_prime_engine<std::default_random_engine> rpe2(rand_sedd);
 
     std::stringstream state;
     state<<rpe1; //save current state
