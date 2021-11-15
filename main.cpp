@@ -16,25 +16,25 @@ int main()
     std::stringstream state;
     state << rpe_1; //save current state
 
-    std::cout << "\nfrom rpe_1 (without seed): ";
-    for (int i = 0; i < 10; i++)
+    std::cout << "\nFrom rpe_1 (without seed): ";
+    for (int i = 0; i < 5; i++)
     {
         std::cout << rpe_1() << ", ";
     }
 
-    std::cout << "\nfrom rpe_2 (with timestamp as seed): ";
-    for (int i = 0; i < 10; i++)
+    std::cout << "\nFrom rpe_2 (with timestamp as seed): ";
+    for (int i = 0; i < 5; i++)
     {
         std::cout << rpe_2() << ", ";
     }
 
     state >> rpe_1; //restore old state
-    std::cout << "\nfrom rpe_1 (without seed) again: ";
-    for (int i = 0; i < 10; i++)
+    std::cout << "\nFrom rpe_1 (restored state): ";
+    for (int i = 0; i < 5; i++)
     {
         std::cout << rpe_1() << ", ";
     }
 
-    std::cout << "\nMin of any rpe: " << rpe_1.min();
+    std::cout << "\n\nMin of any rpe: " << rpe_1.min();
     std::cout << "\nMax of any rpe: " << rpe_1.max();
 }

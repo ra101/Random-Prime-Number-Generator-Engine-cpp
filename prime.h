@@ -1,101 +1,106 @@
 #include <fstream> //for file-handling
-#define primeDBSize 10000
+
+#define DB_SIZE 10000
+#define DB_FILEPATH "primeDB"
 
 namespace ra
 {
 
-    template <typename randomEngine>
+    template <typename engine_class>
     class random_prime_engine
     {
         //this engine takes random engines as template input
-        randomEngine eng;
-        int minPrime;
-        int maxPrime;
+        engine_class eng;
+        int min_prime;
+        int max_prime;
+        char const *db_filepath;
 
     public:
-        random_prime_engine();
-        random_prime_engine(unsigned long);
+        random_prime_engine(unsigned long rand_seed = 0, char const *db_filepath = DB_FILEPATH);
         int operator()();
-        template <class engineTemplate>
-        friend std::stringstream &operator<<(std::stringstream &, const random_prime_engine<engineTemplate> &);
-        template <class engineTemplate>
-        friend std::stringstream &operator>>(std::stringstream &, random_prime_engine<engineTemplate> &);
+        template <class engine_klass>
+        friend std::stringstream &operator<<(std::stringstream &, const random_prime_engine<engine_klass> &);
+        template <class engine_klass>
+        friend std::stringstream &operator>>(std::stringstream &, random_prime_engine<engine_klass> &);
         int min();
         int max();
     };
 
-    template <typename randomEngine>
-    random_prime_engine<randomEngine>::random_prime_engine()
+    template <typename engine_class>
+    random_prime_engine<engine_class>::random_prime_engine(unsigned long rand_seed, char const *db_filepath)
     {
         //lazy intiallisation
-        minPrime = 0;
-        maxPrime = 0;
+        min_prime = 0;
+        max_prime = 0;
+
+        // Get DB path
+        this->db_filepath = db_filepath;
+
+        //
+        eng.seed(rand_seed);
     }
 
-    template <typename randomEngine>
-    random_prime_engine<randomEngine>::random_prime_engine(unsigned long rand_seed)
+    template <typename engine_class>
+    int random_prime_engine<engine_class>::operator()()
     {
-        //lazy intiallisation
-        minPrime = 0;
-        maxPrime = 0;
-        this->eng.seed(rand_seed);
-    }
-
-    template <typename randomEngine>
-    int random_prime_engine<randomEngine>::operator()()
-    {
-        int idx = eng() % primeDBSize; //to get a index within file
-        int retrunValue;
+        int idx = eng() % DB_SIZE; //to get a index within file
+        int rand_prime;
         std::ifstream file;
-        file.open("primeDB");
+        file.open(db_filepath);
+
+        //update rand_prime till it gets the value at index
         for (int i = 0; i <= idx; i++)
-        {
-            file >> retrunValue; //update returnvalue till it gets the value at index
-        }
+            file >> rand_prime;
+
         file.close();
-        return (retrunValue);
+        return (rand_prime);
     }
 
-    template <typename randomEngine>
-    int random_prime_engine<randomEngine>::min()
+    template <typename engine_class>
+    int random_prime_engine<engine_class>::min()
     {
-        if (!minPrime) //if min==0 , i.e. first time intiallization
+        //if min==0 , i.e. first time intiallization
+        if (!min_prime)
         {
             std::ifstream file;
-            file.open("primeDB");
-            file >> this->minPrime; //get int at the start of file
+            file.open(db_filepath);
+            //get int at the start of file
+            file >> min_prime;
             file.close();
         }
-        return this->minPrime;
+
+        return min_prime;
     }
 
-    template <typename randomEngine>
-    int random_prime_engine<randomEngine>::max()
+    template <typename engine_class>
+    int random_prime_engine<engine_class>::max()
     {
-        if (!maxPrime) //if max==0 , i.e. first time intiallization
+        //if max==0 , i.e. first time intiallization
+        if (!max_prime)
         {
             std::ifstream file;
-            file.open("primeDB");
+            file.open(db_filepath);
+            //get int at the end of file
             while (file)
-            {
-                file >> this->maxPrime; //get int at the end of file
-            }
+                file >> max_prime;
             file.close();
         }
-        return this->maxPrime;
+        return max_prime;
     }
 
-    template <class engineTemplate>
-    std::stringstream &operator<<(std::stringstream &out, const random_prime_engine<engineTemplate> &primeClass)
+    template <class engine_klass>
+    std::stringstream &operator<<(std::stringstream &out, const random_prime_engine<engine_klass> &prime_class)
     {
-        out << primeClass.eng; //save the state
+        //save the state
+        out << prime_class.eng;
         return out;
     }
 
-    template <class engineTemplate>
-    std::stringstream &operator>>(std::stringstream &in, random_prime_engine<engineTemplate> &primeClass)
+    template <class engine_klass>
+    std::stringstream &operator>>(std::stringstream &in, random_prime_engine<engine_klass> &prime_class)
     {
-        in >> primeClass.eng; //retrun the state
+        //restores the state
+        in >> prime_class.eng;
         return in;
     }
 }
